@@ -29,4 +29,21 @@ public class RequestBuilderTest {
         assertEquals("packages", request.getPathParts().get(1));
         assertEquals(8, request.getHeaderMap().getContentLength());
     }
+
+    @Test
+    void testBuildRequestFromPost() throws Exception {
+        BufferedReader reader = mock(BufferedReader.class);
+        when(reader.readLine()).thenReturn("GET /deck?name=kienboec HTTP/1.1",
+                "Content-Type: application/json",
+                "Content-Length: 8",
+                "Accept: */*",
+                "",
+                "{'id':1}");
+
+        Request request = new RequestBuilder().buildRequest(reader);
+        assertEquals("/deck", request.getPathname());
+        assertEquals("/deck", request.getServiceRoute());
+        assertEquals("deck", request.getPathParts().get(0));
+        assertEquals(8, request.getHeaderMap().getContentLength());
+    }
 }

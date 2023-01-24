@@ -86,4 +86,37 @@ public class CardTest {
         assertEquals("HTTP/1.1 400 Bad Request", showCardsController.getAllCardsFromUser(request).get().split("\r\n")[0]);
         assertEquals("{ \"message\" : \"Getting Card failed\" }", showCardsController.getAllCardsFromUser(request).get().split("\r\n")[8]);
     }
+
+    @Test
+    void testShowDeckFromUser() throws Exception {
+        BufferedReader reader = mock(BufferedReader.class);
+        Mockito.when(reader.readLine()).thenReturn("GET http://localhost:10001/deck HTTP/1.1",
+                "Content-Type: application/json",
+                "Content-Length: 0",
+                "Accept: */*",
+                "Authorization: Basic 23c496d2ee2494b3f380a2bd7380b811",
+                "");
+        Request request = new RequestBuilder().buildRequest(reader);
+        Connection dbConn = Mockito.mock(Connection.class);
+        DeckConfiguringController deckConfiguringController = new DeckConfiguringController(dbConn);
+        assertEquals("HTTP/1.1 400 Bad Request", deckConfiguringController.showDeckFromUser(request).get().split("\r\n")[0]);
+        assertEquals("{ \"message\" : \"Getting User Deck failed\" }", deckConfiguringController.showDeckFromUser(request).get().split("\r\n")[8]);
+    }
+
+    @Test
+    void testConfigureDeckFromUser() throws Exception {
+        BufferedReader reader = mock(BufferedReader.class);
+        Mockito.when(reader.readLine()).thenReturn("GET http://localhost:10001/deck HTTP/1.1",
+                "Content-Type: application/json",
+                "Content-Length: 0",
+                "Accept: */*",
+                "Authorization: Basic 23c496d2ee2494b3f380a2bd7380b811",
+                "");
+        Request request = new RequestBuilder().buildRequest(reader);
+        Connection dbConn = Mockito.mock(Connection.class);
+        DeckConfiguringController deckConfiguringController = new DeckConfiguringController(dbConn);
+        assertEquals("HTTP/1.1 400 Bad Request", deckConfiguringController.configureDeckFromUser(request).get().split("\r\n")[0]);
+        assertEquals("{ \"message\" : \"Deck configuring failed\" }", deckConfiguringController.configureDeckFromUser(request).get().split("\r\n")[8]);
+    }
+
 }

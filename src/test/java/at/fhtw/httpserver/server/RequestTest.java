@@ -32,6 +32,16 @@ class RequestTest {
     }
 
     @Test
+    void testGetParamsWithId2() {
+        Request request = new Request();
+        request.setPathname("/packages");
+        request.setParams("name=altenhof");
+
+        assertEquals("/packages", request.getPathname());
+        assertEquals("name=altenhof", request.getParams());
+    }
+
+    @Test
     void testGetServiceRouteWithSlash() {
         Request request = new Request();
         request.setPathname("/");

@@ -80,4 +80,37 @@ public class UserTest {
         LoginController loginController = new LoginController(dbConn);
         assertEquals("{ \"message\" : \"Login failed\" }", loginController.authenticateCredentials(request).get().split("\r\n")[8]);
     }
+
+    @Test
+    void testUpdateUserData() throws Exception {
+        BufferedReader reader = mock(BufferedReader.class);
+        Mockito.when(reader.readLine()).thenReturn("GET http://localhost:10001/users HTTP/1.1",
+                "Content-Type: application/json",
+                "Content-Length: 0",
+                "Accept: */*",
+                "Authorization: Basic 23c496d2ee2494b3f380a2bd7380b811",
+                "");
+        Request request = new RequestBuilder().buildRequest(reader);
+        Connection dbConn = Mockito.mock(Connection.class);
+        UserDataController userDataController = new UserDataController(dbConn);
+        assertEquals("HTTP/1.1 400 Bad Request", userDataController.updateUserData(request).get().split("\r\n")[0]);
+        assertEquals("{ \"message\" : \"Updating failed\" }", userDataController.updateUserData(request).get().split("\r\n")[8]);
+    }
+
+
+    @Test
+    void testAddNewUser() throws Exception {
+        BufferedReader reader = mock(BufferedReader.class);
+        Mockito.when(reader.readLine()).thenReturn("GET http://localhost:10001/users HTTP/1.1",
+                "Content-Type: application/json",
+                "Content-Length: 1",
+                "Accept: */*",
+                "",
+                "");
+        Request request = new RequestBuilder().buildRequest(reader);
+        Connection dbConn = Mockito.mock(Connection.class);
+        UserDataController userDataController = new UserDataController(dbConn);
+        assertEquals("HTTP/1.1 400 Bad Request", userDataController.addNewUser(request).get().split("\r\n")[0]);
+        assertEquals("{ \"message\" : \"Registration failed\" }", userDataController.addNewUser(request).get().split("\r\n")[8]);
+    }
 }

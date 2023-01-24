@@ -59,6 +59,23 @@ public class DBInit {
             "    REFERENCES card(id)" +
             " );";
 
+    private String dbBattleTableCreationSQL = "CREATE TABLE IF NOT EXISTS battle" +
+            " (" +
+            "  id SERIAL PRIMARY KEY," +
+            "  player1_id INT NULL," +
+            "  player2_id INT NULL," +
+            "  winner_id INT NULL," +
+            "  CONSTRAINT fk_player1 " +
+            "    FOREIGN KEY (player1_id)" +
+            "    REFERENCES appuser(id) ON DELETE SET NULL," +
+            "  CONSTRAINT fk_player2 " +
+            "    FOREIGN KEY (player2_id)" +
+            "    REFERENCES appuser(id) ON DELETE SET NULL," +
+            "  CONSTRAINT fk_winner " +
+            "    FOREIGN KEY (winner_id)" +
+            "    REFERENCES appuser(id) ON DELETE SET NULL" +
+            " );";
+
     public DBInit() {
         this.dbConn = this.connectToDBServer();
         System.out.println("Creating database...");
@@ -72,6 +89,7 @@ public class DBInit {
             stmt.executeUpdate(dbUserTableCreationSQL);
             stmt.executeUpdate(dbCardTableCreationSQL);
             stmt.executeUpdate(dbDeckTableCreationSQL);
+            stmt.executeUpdate(dbBattleTableCreationSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -20,6 +20,7 @@ public class DBUser {
     private static final String updatetUserSQL = "UPDATE appuser SET username = ?, bio = ?, image = ? WHERE id = ?";
     private static final String insertDeckSQL = "INSERT INTO deck(appuser_id) VALUES(?)";
     private static final String selectUserByNameSQL = "SELECT * FROM appuser WHERE username = ?";
+    private static final String selectUserNameByIdSQL = "SELECT username FROM appuser WHERE id = ?";
     private static final String selectScoreBoardWithUserNameSQL = "SELECT stats, username FROM appuser ORDER BY stats DESC";
 
     public DBUser(Connection dbConn) {
@@ -67,6 +68,25 @@ public class DBUser {
             }
             System.out.println("Found User: " + foundUser);
             return foundUser;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getUserNameById(int id){
+        System.out.println("Getting Username: " + id);
+        try {
+            PreparedStatement stmt = this.dbConn.prepareStatement(selectUserNameByIdSQL);
+            stmt.setInt(1, id);
+            ResultSet resultSet = stmt.executeQuery();
+
+            while (resultSet.next()){
+                String foundName = resultSet.getString("username");
+                System.out.println("Found User Name: " + foundName);
+                return foundName;
+            }
+
+            return null;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

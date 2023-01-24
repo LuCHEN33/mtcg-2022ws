@@ -3,10 +3,7 @@ package at.fhtw;
 import at.fhtw.httpserver.utils.Router;
 import at.fhtw.httpserver.server.Server;
 import at.fhtw.monstertradingcardsapp.persistence.DBInit;
-import at.fhtw.monstertradingcardsapp.service.card.DeckConfiguringService;
-import at.fhtw.monstertradingcardsapp.service.card.PackageAcquiringService;
-import at.fhtw.monstertradingcardsapp.service.card.PackageAddingService;
-import at.fhtw.monstertradingcardsapp.service.card.ShowCardsService;
+import at.fhtw.monstertradingcardsapp.service.card.*;
 import at.fhtw.monstertradingcardsapp.service.echo.EchoService;
 import at.fhtw.monstertradingcardsapp.service.user.LoginService;
 import at.fhtw.monstertradingcardsapp.service.user.ScoreBoardService;
@@ -39,6 +36,7 @@ public class Main {
         router.addService("/deck", new DeckConfiguringService(db.getDbConn()));
         router.addService("/stats", new UserStatsService(db.getDbConn()));
         router.addService("/score", new ScoreBoardService(db.getDbConn()));
+        router.addService("/battles", new BattleService(db.getDbConn()));
         return router;
     }
 
