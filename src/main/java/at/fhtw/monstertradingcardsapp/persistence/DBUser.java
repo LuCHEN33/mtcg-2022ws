@@ -18,6 +18,9 @@ public class DBUser {
 
     private static final String insertUserSQL = "INSERT INTO appuser(username, password, coins, stats) VALUES(?,?,?,?)";
     private static final String updatetUserSQL = "UPDATE appuser SET username = ?, bio = ?, image = ? WHERE id = ?";
+
+    private static final String updatetUserStatsSQL = "UPDATE appuser SET username = ?, stats = ?, WHERE id = ?";
+
     private static final String insertDeckSQL = "INSERT INTO deck(appuser_id) VALUES(?)";
     private static final String selectUserByNameSQL = "SELECT * FROM appuser WHERE username = ?";
     private static final String selectUserNameByIdSQL = "SELECT username FROM appuser WHERE id = ?";
@@ -150,6 +153,22 @@ public class DBUser {
             return true;
         }
         return false;
+    }
+
+    public boolean updateUserStatsByName(int userId, User player){
+        System.out.println("Updating User-stats: " + player.getStats());
+        try {
+            PreparedStatement stmt = this.dbConn.prepareStatement(updatetUserStatsSQL);
+            stmt.setString(1,player.getUserName());
+            stmt.setInt(2, player.getStats());
+            stmt.setInt(3, userId);
+            if (stmt.executeUpdate() == 1){
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

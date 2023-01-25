@@ -6,12 +6,15 @@ import at.fhtw.httpserver.server.Request;
 import at.fhtw.httpserver.server.Response;
 import at.fhtw.monstertradingcardsapp.controller.Controller;
 import at.fhtw.monstertradingcardsapp.model.Card;
+import at.fhtw.monstertradingcardsapp.model.User;
 import at.fhtw.monstertradingcardsapp.persistence.DBBattle;
 import at.fhtw.monstertradingcardsapp.persistence.DBCard;
 import at.fhtw.monstertradingcardsapp.persistence.DBUser;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class BattleController extends Controller {
     private final DBCard dbCard;
@@ -48,28 +51,65 @@ public class BattleController extends Controller {
 
                 List<Card> playerOnesDeck;
                 List<Card> playerTwosDeck;
-                String playerOneName=null;
+                String playerOneName;
+                List<String> logs = new ArrayList<>();
                 if(this.dbBattle.isPlayerOneWaiting() > 0) {
                     this.dbBattle.addUserToExistingBattle(userName);
                     playerOneName = this.dbBattle.getNameOfPlayerOneFromExistingBattle();
                     playerOnesDeck = this.dbCard.getDeck(playerOneName);
                     playerTwosDeck = this.dbCard.getDeck(userName);
-                    int count = 3;
+
+                    int n = 3;
                     for(Card tmpCard : playerOnesDeck){
-                        System.out.println(playerOneName + ": " + tmpCard.getName() + " (" + tmpCard.getDamage()+ ") "
-                            + " vs " + userName + ": " + playerTwosDeck.get(count).getName()
-                                + " (" + playerTwosDeck.get(count).getDamage()+ ") ");
-                        count--;
+                        Random rand = new Random();
+                        int count = rand.nextInt(n);
+
+                        String winCard = this.dbBattle.Fights(tmpCard,playerTwosDeck.get(count));
+
+
+                        logs.add(playerOneName + ": " + tmpCard.getName() + " (" + tmpCard.getDamage()+ ") "
+                                + " vs " + userName + ": " + playerTwosDeck.get(count).getName()
+                                + " (" + playerTwosDeck.get(count).getDamage()+ ") " + "winCard: " + winCard);
+
+
+                       /* if(winCard.equals(tmpCard.getName()) && playerTwosDeck.size() != 0){
+                            playerOnesDeck.remove(0);;
+                            n--;
+                        }
+                        if(winCard.equals(playerTwosDeck.get(count).getName()) && playerOnesDeck.size()!= 0){
+                            playerOnesDeck.remove(0);
+                        }*/
                     }
+                    /*String winner = null;
+                    if(playerOnesDeck.size() < playerTwosDeck.size()){
+                        winner = userName;
+                    } else if (playerOnesDeck.size() > playerTwosDeck.size()) {
+                        winner =playerOneName;
+                    }else{
+                        winner = "Draw";
+                    }*/
+
+                    String winner = playerOneName;
+                    User playerOne = this.dbUser.getUserByName(playerOneName);
+                    int playerOneId = playerOne.getId();
+
+                    playerOne.setStats(103);
+
+                    //this.dbUser.updateUserStatsByName(playerOneId,playerOne);
+
+                    return new Response(
+                            HttpStatus.CREATED,
+                            responseContentType,
+                            "{ message: \"" + logs + winner + " win! " + "\" }"
+                    );
                 } else {
                     this.dbBattle.addUserToNewBattle(userName);
+                    return new Response(
+                            HttpStatus.CREATED,
+                            responseContentType,
+                            "{ message: \" waiting other player to join\" }"
+                    );
                 }
-
-                return new Response(
-                        HttpStatus.CREATED,
-                        responseContentType,
-                        "{ message: \"" + playerOneName + "\" }"
-                );
             }
         }
         return new Response(

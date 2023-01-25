@@ -1,5 +1,6 @@
 package at.fhtw.monstertradingcardsapp.model;
 
+
 import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.*;
 
@@ -16,4 +17,5 @@ public class Card {
     private String name;
     @JsonAlias({"Damage"})
     private Integer damage;
+
 }
